@@ -1,0 +1,129 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div id="body" class="text-center">
+    <div id="bookDiv" style="display:none;">
+        <div>
+            <button class="w-25 btn btn-success float-end" onclick="showForm(true);">Add new Book</button>
+            <button class="w-25 btn btn-warning float-end" onclick="callStackApi();">call Stack API</button>
+        </div>
+    <table id="booksTable" class="table table-bordered table-light">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Description</th>
+                <th>Rating</th>
+                <th>Price</th>
+                <th>Genres</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <div>
+        <div class="justify-content-md-center">
+            <button id="prevBtn" class="w-25 inline-block btn btn-lg btn-secondary" onclick="prev();"><<</button>
+            <input id="pageNumber" type="text" value="1" class="text-center form-control-lg inline-block" readonly="readonly" />
+            <button id="nextBtn" class="w-25 inline-block btn btn-lg btn-primary" onclick="next();">>></button>
+        </div>
+    </div>
+</div>
+
+<div id="form" class="text-center" style="display:none;">
+    <h1>Book</h1>
+    <div class="row justify-content-md-center">
+        <div class="col-lg-6 col-md-8 col-sm-12">
+            <form action="/" id="bookForm" method="post" novalidate="novalidate" onsubmit="postBook(event);">
+                <input id="BookId" name="BookId" type="hidden" />
+                <h2 id="formLable">Create a new Book.</h2>
+                <hr>
+
+                <div class="form-floating mb-3">
+                    <input class="form-control" required="" type="text" data-msg-required="The Book Name field is required." id="Input_Name" name="Name" value="">
+                    <label for="Input_Name">Book Title</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <select class="form-control" required="" data-msg-required="The Author field is required." id="Input_Author" name="AuthorId">
+                        <option value=""> -- Select Author -- </option>
+                    </select>
+                    <label for="Input_Author">Author</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input class="form-control" required="" type="text" data-msg-required="The Book Description field is required." id="Input_Description" name="Description" value="">
+                    <label for="Input_Description">Book Description</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input class="form-control" required="" type="number" min="0" max="6" data-msg-required="The Book Rating is required." id="Input_Rating" name="Rating" value="">
+                    <label for="Input_Rating">Book Rating</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input class="form-control" required="" type="text" data-type="currency" data-msg-required="The Book Price field is required." id="Input_Price" name="Price" value="">
+                    <label for="Input_Price">Book Price</label>
+                </div>
+                <div class="row justify-content-md-center">
+                    <button id="bookSubmit" type="submit" class="w-50 inline-block btn btn-lg btn-primary">Save</button>
+                    <button type="button" class="w-50 inline-block btn btn-lg btn-secondary" onclick="showTable()">cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="genresForm" class="text-center" style="display:none;">
+    <h1>Book Genres</h1>
+    <div class="row justify-content-md-center">
+        <div class="col-lg-6 col-md-8 col-sm-12">
+                <form action="/" id="bookGenresForm" method="post" novalidate="novalidate" onsubmit="updateBookGenres(event);">
+                    <input id="GenresBookID" name="GenresBookID" type="hidden" />
+                <h2>Update Book Genres</h2>
+                <hr>
+
+                <div class="form-floating mb-3">
+                    <select id="genresList" multiple="multiple" size="10" name="genresList[]" title="genresList[]">
+                    </select>
+                </div>
+                <div class="row justify-content-md-center">
+                    <button id="genresSubmit" type="submit" class="w-50 inline-block btn btn-lg btn-primary">Save</button>
+                    <button type="button" class="w-50 inline-block btn btn-lg btn-secondary" onclick="showTable()">cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+</div>
+
+@section scripts{
+    <script src="~/Scripts/ApiCall.js"></script>
+    <script src="~/Scripts/textToMoney.js"></script>
+    <script src="~/lib/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
+
+    <script type="text/javascript">
+        var page = 1;
+        var pageSize = 20;
+        var validator;
+
+        $(function () {
+            validator = $("#bookForm").validate({
+                errorClass: 'text-danger field-validation-valid',
+                validClass: 'valid',
+                errorElement: 'span'});
+
+            fetchGenres();
+            fetchAuthors();
+            fetchBooks(page, pageSize);
+            $('#genresList').bootstrapDualListbox();
+        });
+
+        function next() {
+            fetchBooks(++page, pageSize);
+        }
+
+        function prev() {
+            fetchBooks(--page, pageSize);
+        }
+    </script>
+}
